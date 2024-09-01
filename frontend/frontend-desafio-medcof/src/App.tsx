@@ -5,6 +5,7 @@ import Login from './login/Login';
 import NotFound from './not-found/NotFound';
 import Tasks from './tasks/Tasks';
 import Register from './register/Register';
+import TasksEdit from './tasks/TasksEdit';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="tasks" element={<Tasks />} />
+        <Route path="tasks/:id" element={<TasksEdit />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

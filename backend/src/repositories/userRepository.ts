@@ -2,6 +2,7 @@ import User from '../models/user';
 import connect from './db';
 import { ObjectId } from 'mongodb';
 import * as tasksRepository from './taskRepository';
+import bcrypt from 'bcrypt';
 
 const COLLECTION = "users";
  
@@ -35,12 +36,14 @@ export async function getUserByName(name: string): Promise<User | null> {
     return user;
 }
 
-export async function getUserByEmail(email: string): Promise<User | null> {
+export async function getUserByEmail(email: string, withTasks: boolean = true): Promise<User | null> {
     const db = await connect();
     const user = await db.collection<User>(COLLECTION)
         .findOne({ email: email });
- 
+
     if (!user) return null;
+
+    if (!withTasks) return user;
 
     const tasks = await tasksRepository.getTasks(undefined, user._id?.toHexString()!);
 
@@ -59,9 +62,15 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export async function addUser(user: User): Promise<User> {
-    if (!user.name || !user.email || user.password)
+    if (!user.name || !user.email || !user.password)
         throw new Error(`Invalid user.`);
- 
+
+    let saltRounds = 10;
+    let hashedPassword = await bcrypt.hash(user.password, saltRounds);
+    
+    user.password = hashedPassword;
+    console.log(user)
+
     const db = await connect();
     const result = await db.collection<User>(COLLECTION)
         .insertOne(user);

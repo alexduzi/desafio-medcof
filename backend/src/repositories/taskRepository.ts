@@ -45,12 +45,13 @@ export async function addTask(task: Task): Promise<Task> {
  
 export async function updateTask(id: string, newTask: Task): Promise<Task | null> {
     if (!ObjectId.isValid(id)) throw new Error(`Invalid id.`);
- 
+
+    const updatedAt = new Date().toISOString();
     const db = await connect();
-    await db.collection<Task>(COLLECTION)
-        .updateOne({ _id: ObjectId.createFromHexString(id) }, { $set: newTask });
- 
-    return getTask(id);
+    const result = await db.collection<Task>(COLLECTION)
+        .updateOne({ _id: ObjectId.createFromHexString(id) }, { $set: { description: newTask.description, status: newTask.status, updatedAt } });
+
+    return await getTask(id);
 }
  
 export async function deleteTask(id: string): Promise<boolean> {

@@ -32,3 +32,23 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
 };
+
+export const register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const userExists = await userRepository.getUserByEmail(req.body.email, false);
+
+        if (userExists)
+            return res.status(400).json({ message: "User already exists" });
+
+        const user = await userRepository.addUser(req.body);
+
+        return res
+            .status(200)
+            .json({ message: "User created", user });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+
+};

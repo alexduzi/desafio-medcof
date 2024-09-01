@@ -19,9 +19,10 @@ router.get('/tasks', passport.authenticate("jwt", { session: false }), tasksCont
 router.get('/tasks/:id', passport.authenticate("jwt", { session: false }), tasksController.getTaksById);
 router.post('/tasks', passport.authenticate("jwt", { session: false }), tasksController.createTask);
 router.put('/tasks', passport.authenticate("jwt", { session: false }), tasksController.updateTask);
-router.delete('/tasks', passport.authenticate("jwt", { session: false }), tasksController.deleteTask);
+router.delete('/tasks/:id', passport.authenticate("jwt", { session: false }), tasksController.deleteTask);
 
 // auth
 router.post('/login', authController.login);
+router.post('/register', authController.register);
 
 export default router;

@@ -15,6 +15,8 @@ function Register() {
 
     const authState = useAppSelector((state) => state.auth);
 
+    const user = useAppSelector((state) => state.auth.user);
+
     function dismissError(event: React.MouseEvent<HTMLDivElement>) {
         dispatch(cleanAuthState());
         setError('');
@@ -28,23 +30,25 @@ function Register() {
         }
     }
 
-    const handleRegister = async () => {
-        try {
-            if (!name || !email || !password) {
-                setError('Preencha todos os campos para continuar!');
-                return;
-            }
-
-            await dispatch(register({ email, id: '', name, password })).unwrap();
-            navigate("/tasks");
-        } catch (e) {
-          console.error(e);
+    const renderSuccessMessage = () => { 
+        if (user) {
+            return (<div className="mb-3 alert alert-success">
+                        <div>Usuário criado com sucesso!</div>
+                        <Link to="/login">Logar!</Link>
+                    </div>);
         }
     };
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        handleRegister();
+        if (!name || !email || !password) {
+            setError('Preencha todos os campos para continuar!');
+            return;
+        }
+
+        dispatch(register({ email, id: '', name, password })).catch(() => {
+            console.log('Erro ao criar conta!');
+        });
     }
 
     return (
@@ -56,7 +60,7 @@ function Register() {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleInputNome" className="form-label">Nome</label>
-                    <input type="email" className="form-control" id="exampleInputNome" onChange={(e) =>  setName(e.target.value)} />
+                    <input type="text" className="form-control" id="exampleInputNome" onChange={(e) =>  setName(e.target.value)} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="exampleInputEmail1" className="form-label">Email</label>
@@ -73,6 +77,7 @@ function Register() {
                     <button type="submit" className="btn btn-primary">Acessar</button>
                 </div>
                 {renderLoginError()}
+                {renderSuccessMessage()}
             </form>
         </div>
     );

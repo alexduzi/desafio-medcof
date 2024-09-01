@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks';
 import { useNavigate } from 'react-router-dom';
-import { cleanTaskState, createTask, getTasks } from '../slices/taskSlice';
+import { cleanTaskState, createTask, deleteTask, getTasks } from '../slices/taskSlice';
 
 const options = [
     { value: 0, label: 'Todas' },
@@ -19,12 +19,9 @@ function Tasks () {
     const tasksState = useAppSelector((state) => state.task);
 
     useEffect(() => {
-        if (tasksState.tasks?.length === 0) {
-            console.log('getTasks');
-            dispatch(getTasks({ status: 0 })).unwrap();
-        }
+        dispatch(getTasks({ status: 0 })).unwrap();
         
-      }, [dispatch, tasksState?.tasks?.length]);
+      }, [dispatch]);
 
     function dismissError(event: React.MouseEvent<HTMLDivElement>) {
         dispatch(cleanTaskState()).unwrap();
@@ -41,7 +38,13 @@ function Tasks () {
     function renderTasks() {
         if (tasksState.tasks && tasksState.tasks.length > 0) {
             return tasksState.tasks.map((task) => {
-                return (<li key={task._id} className="list-group-item">{task.description}</li>);
+                return (<li key={task._id} className="list-group-item">
+                    {task.description}
+                        <div className='d-flex justify-content-end'>
+                            <button className="btn btn-danger me-2" onClick={() => dispatch(deleteTask(task)).unwrap()}>Excluir</button>
+                            <button className="btn btn-primary" onClick={() => navigate(`/tasks/${task._id}`)}>Editar</button>
+                        </div>
+                    </li>);
             });
         }
 
@@ -74,7 +77,7 @@ function Tasks () {
                     <input className="form-control" id="taskFormControlInput1" onChange={(e) => setTask(e.target.value)} />
                 </div>
                 <div className="col-auto">
-                    <button type="submit" className="btn btn-primary" onClick={addNewTask}>Adicionar Tarefa</button>
+                    <button type="submit" className="btn btn-primary">Adicionar Tarefa</button>
                 </div>
             </form>
             

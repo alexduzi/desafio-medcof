@@ -45,7 +45,7 @@ export const createTask = async (req: Request, res: Response) => {
         await taskRepository.addTask(task);
 
         const tasks = await taskRepository.getTasks(0,  user?._id?.toHexString()!);
-        
+
         return res.status(200).send({ data: tasks });
     } catch (err: any) {
         return res.status(500).send({ message: err });
@@ -54,10 +54,14 @@ export const createTask = async (req: Request, res: Response) => {
 
 export const updateTask = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
         const task = req.body as Task;
-        const updatedTask = await taskRepository.updateTask(id, task);
-        return res.status(200).send({ data: updatedTask });
+        const user = req.user as User;
+
+        const updatedTask = await taskRepository.updateTask(task._id?.toString() ?? '', task);
+        
+        const tasks = await taskRepository.getTasks(0,  user?._id?.toHexString()!);
+
+        return res.status(200).send({ data: tasks });
     } catch (err: any) {
         return res.status(500).send({ message: err });
     }
@@ -65,9 +69,13 @@ export const updateTask = async (req: Request, res: Response) => {
 
 export const deleteTask = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
+        const id = req.params.id as string;
+        const user = req.user as User;
         const deleted = await taskRepository.deleteTask(id);
-        return res.status(200).send({ data: deleted });
+
+        const tasks = await taskRepository.getTasks(0,  user?._id?.toHexString()!);
+
+        return res.status(200).send({ data: tasks });
     } catch (err: any) {
         return res.status(500).send({ message: err });
     }

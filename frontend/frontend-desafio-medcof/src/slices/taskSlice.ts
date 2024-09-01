@@ -28,7 +28,7 @@ const initialState: TasksApiState = {
 
 export const getTasks = createAsyncThunk("getTasks", async (data: FilterTask) => {
   const response = await axiosInstance.get("/tasks", { params: { status: data.status } });
-  // console.log('response', response);
+  
   const resData = response.data.data;
 
   return resData;
@@ -36,7 +36,23 @@ export const getTasks = createAsyncThunk("getTasks", async (data: FilterTask) =>
 
 export const createTask = createAsyncThunk("createTask", async (data: Task) => {
   const response = await axiosInstance.post("/tasks", data);
-  console.log('response', response);
+  
+  const resData = response.data.data;
+
+  return resData;
+});
+
+export const deleteTask = createAsyncThunk("deleteTask", async (data: Task) => {
+  const response = await axiosInstance.delete(`/tasks/${data._id}`);
+  
+  const resData = response.data.data;
+
+  return resData;
+});
+
+export const updateTask = createAsyncThunk("updateTask", async (data: Task) => {
+  const response = await axiosInstance.put(`/tasks`, data);
+  
   const resData = response.data.data;
 
   return resData;
@@ -72,6 +88,24 @@ const userSlice = createSlice({
       })
       .addCase(createTask.rejected, (state, action) => {
         return { ...state, status: 'failed', error: action.error.message || "Create task failed" };
+      })
+      .addCase(deleteTask.pending, (state) => {
+        return { ...state, status: 'loading', error: null };
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        return { ...state, status: 'idle', tasks: [ ...action.payload ] };
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        return { ...state, status: 'failed', error: action.error.message || "Delete task failed" };
+      })
+      .addCase(updateTask.pending, (state) => {
+        return { ...state, status: 'loading', error: null };
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        return { ...state, status: 'idle', tasks: [ ...action.payload ] };
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        return { ...state, status: 'failed', error: action.error.message || "Update task failed" };
       });
   },
 });

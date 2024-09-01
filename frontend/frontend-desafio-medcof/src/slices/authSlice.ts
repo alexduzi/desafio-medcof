@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
 import { create } from "domain";
 import { jwtDecode } from "jwt-decode";
+import { AxiosError } from "axios";
 
 type LoginData = {
   email: string;
@@ -40,14 +41,21 @@ export const login = createAsyncThunk("login", async (data: LoginData) => {
   return user;
 });
 
-export const register = createAsyncThunk("register", async (data: User) => {
-  const response = await axiosInstance.post(
-    "/register",
-    data
-  );
-  const resData = response.data;
+export const register = createAsyncThunk("register", async (data: User, { rejectWithValue }) => {
+  let response;
+  let errorAx;
+  try {
+    response = await axiosInstance.post(
+      "/register",
+      data
+    );
+  } catch (error: any) {
+    errorAx = error as AxiosError;
 
-  return resData;
+    return  rejectWithValue(errorAx.response?.data);
+  }
+
+  return response?.data;
 });
 
 export const logout = createAsyncThunk("logout", async () => {
@@ -92,6 +100,7 @@ const authSlice = createSlice({
         }
       )
       .addCase(login.rejected, (state, action) => {
+        
         state.status = "failed";
         state.error = action.error.message || "Login failed";
       })
@@ -107,11 +116,10 @@ const authSlice = createSlice({
           state.user = action.payload;
         }
       )
-      .addCase(register.rejected, (state, action) => {
+      .addCase(register.rejected, (state, action: any) => {
         state.status = "failed";
-        state.error = action.error.message || "Registration failed";
+        state.error = action.payload.message || "Registration failed";
       })
-
       .addCase(logout.pending, (state) => {
         state.status = "loading";
         state.error = null;
