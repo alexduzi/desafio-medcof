@@ -2,10 +2,9 @@ import { ObjectId } from "mongodb";
 import User from "./user";
 
 export enum TaskStatus {
-    doing = 1,
-    done = 2,
-    delayed = 3,
-    new = 4
+    all = 0,
+    done = 1,
+    pendency = 2,
 }
 
 export default class Task {

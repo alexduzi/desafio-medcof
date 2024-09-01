@@ -19,11 +19,15 @@ export async function getTask(id: string): Promise<Task | null> {
  
 export async function getTasks(status: number | undefined, userId: string): Promise<Task[]> {
     const db = await connect();
-    const tasks = await db.collection<Task>(COLLECTION)
+
+    if (status === 0)
+        return await db.collection<Task>(COLLECTION)
         .find({ userId: ObjectId.createFromHexString(userId) })
         .toArray();
- 
-    return tasks;
+        
+    return await db.collection<Task>(COLLECTION)
+        .find({ userId: ObjectId.createFromHexString(userId), status })
+        .toArray();
 }
 
 export async function addTask(task: Task): Promise<Task> {
@@ -35,7 +39,7 @@ export async function addTask(task: Task): Promise<Task> {
         .insertOne(task);
  
     task._id = result.insertedId;
-
+    
     return task;
 }
  

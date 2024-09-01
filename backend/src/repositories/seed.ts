@@ -31,21 +31,21 @@ import Task, { TaskStatus } from "../models/task";
 
         const creatAt = new Date().toDateString();
 
-        let task1 = new Task("descrição task 1", creatAt, creatAt, TaskStatus.new, userTest1?._id);
-        let task2 = new Task("descrição task 2", creatAt, creatAt, TaskStatus.new, userTest1?._id);
-        let task3 = new Task("descrição task 3", creatAt, creatAt, TaskStatus.new, userTest1?._id);
+        let task1 = new Task("descrição task 1", creatAt, creatAt, TaskStatus.pendency, userTest1?._id);
+        let task2 = new Task("descrição task 2", creatAt, creatAt, TaskStatus.pendency, userTest1?._id);
+        let task3 = new Task("descrição task 3", creatAt, creatAt, TaskStatus.done, userTest1?._id);
         
         const userTest2 = await userRepository.getUserByName("Teste 2");
 
-        let task4 = new Task("descrição task 1", creatAt, creatAt, TaskStatus.new, userTest2?._id);
-        let task5 = new Task("descrição task 2", creatAt, creatAt, TaskStatus.new, userTest2?._id);
-        let task6 = new Task("descrição task 3", creatAt, creatAt, TaskStatus.new, userTest2?._id);
+        let task4 = new Task("descrição task 1", creatAt, creatAt, TaskStatus.done, userTest2?._id);
+        let task5 = new Task("descrição task 2", creatAt, creatAt, TaskStatus.pendency, userTest2?._id);
+        let task6 = new Task("descrição task 3", creatAt, creatAt, TaskStatus.done, userTest2?._id);
 
         const adminUser2 = await userRepository.getUserByName("ADMIN");
 
-        let task7 = new Task("descrição task 1", creatAt, creatAt, TaskStatus.new, adminUser2?._id);
-        let task8 = new Task("descrição task 2", creatAt, creatAt, TaskStatus.new, adminUser2?._id);
-        let task9 = new Task("descrição task 3", creatAt, creatAt, TaskStatus.new, adminUser2?._id);
+        let task7 = new Task("descrição task 1", creatAt, creatAt, TaskStatus.done, adminUser2?._id);
+        let task8 = new Task("descrição task 2", creatAt, creatAt, TaskStatus.pendency, adminUser2?._id);
+        let task9 = new Task("descrição task 3", creatAt, creatAt, TaskStatus.done, adminUser2?._id);
 
         const tasks = [
             task1,

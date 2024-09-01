@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import * as taskRepository from "../repositories/taskRepository";
 import Task, { TaskStatus } from "../models/task";
 import User from "../models/user";
+import { ObjectId } from "mongodb";
 
 export const getAllTasks = async (req: Request, res: Response) => {
   try {
@@ -12,8 +13,8 @@ export const getAllTasks = async (req: Request, res: Response) => {
 
     let status = 0;
 
-    if (req.params.status)
-        status = Number.parseInt(req.params.status) as TaskStatus;
+    if (req.query.status)
+        status = Number.parseInt(req.query.status as string) as TaskStatus;
 
     const userId = user?._id?.toHexString()!;
 
@@ -37,8 +38,15 @@ export const getTaksById = async (req: Request, res: Response) => {
 export const createTask = async (req: Request, res: Response) => {
     try {
         const task = req.body as Task;
-        const newTask = await taskRepository.addTask(task);
-        return res.status(200).send({ data: newTask });
+        const user = req.user as User;
+        task.userId = user?._id;
+        task._id = undefined;
+
+        await taskRepository.addTask(task);
+
+        const tasks = await taskRepository.getTasks(0,  user?._id?.toHexString()!);
+        
+        return res.status(200).send({ data: tasks });
     } catch (err: any) {
         return res.status(500).send({ message: err });
     }
