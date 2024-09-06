@@ -1,6 +1,3 @@
-# desafio-medcof
-repositório para código do desafio medcof.
-
 # INSTRUÇÕES:
 projeto foi criado utilizando react, nodejs e mongodb
 
