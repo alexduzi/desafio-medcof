@@ -9,7 +9,7 @@ criar arquivo .env na raiz da pasta backend com as variáveis
 
 PORT=8080
 MONGO_HOST=mongodb://127.0.0.1:27017
-MONGO_DATABASE=tasksmedcof
+MONGO_DATABASE=todoapp
 SECRET_JWT=d96plxGQlWWFpIbtSncWQzgw6vXCrxsV
 
 para popular o banco com algumas informações rodar o script npm run seed
